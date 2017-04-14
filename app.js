@@ -10,6 +10,7 @@ if (args.indexOf('cors') >= 0) {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use('/auth', require('./api/auth'));
+app.use('/users', require('./api/users'));
 app.use('/api', require('./api/methods'));
 app.use('/api', require('./api/tags'));
 let groups = require('./api/groups');
