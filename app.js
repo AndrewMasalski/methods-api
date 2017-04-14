@@ -3,7 +3,8 @@ let bodyParser = require('body-parser');
 require('./db');
 let app = express();
 
-if (process.argv.cors) {
+let args = process.argv.slice(2);
+if (args.indexOf('cors') >= 0) {
 	app.use(require('./cors'));
 }
 app.use(bodyParser.json());
