@@ -1,0 +1,26 @@
+{
+  "name": "metodics-api",
+  "version": "1.0.0",
+  "description": "metodics catalog backend",
+  "main": "app.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AndrewMasalski/metodics.git"
+  },
+  "author": "Andrew Masalski",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/AndrewMasalski/metodics/issues"
+  },
+  "engines": {
+    "node": ">=6.9.2"
+  },
+  "homepage": "https://github.com/AndrewMasalski/metodics#readme",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "diskdb": "^0.1.17",
+    "express": "^4.15.2",
+    "lodash": "^4.17.4"
+  }
+}
