@@ -42,27 +42,35 @@ router.route('/search')
             let allMethods = db.methods.find({});
             let searchParams = req.body;
             let filteredMethods = filterMethods(allMethods, searchParams);
+            let groups = _.transform(db.groups.find(), function(result, value) {result[value._id] = value;}, {});
+            let tags = _.transform(db.tags.find(), function(result, value) {result[value._id] = value;}, {});
 
-            let groups = db.groups.find();
-            let tags = db.tags.find();
+            let resultGroups = {};
+            let resultTags = {};
+            _.forEach(filteredMethods, function(method, ind){
+                if (method.group) {
+                    resultGroups[method.group] = groups[method.group];
+                }
+                _.forEach(method.tags, function(tagId) {
+                    if (tags[tagId]) {
+                        resultTags[tagId] = tags[tagId];
+                    }
+                });
+            });
+
             let page = Number(searchParams.page || 1) - 1;
             let pageSize = Number(searchParams.pageSize || 25);
             let start = page * pageSize;
             let results = [];
+
             for (let i = start; i < start + pageSize && i < filteredMethods.length; i++) {
                 let method = filteredMethods[i];
                 method.index = i;
-                if (!!method.group) {
-                    let found = _.find(groups, {_id: method.group});
-                    if (!!found) {
-                        method.group = found;
-                    }
-                }
+                method.group = groups[method.group];
                 let tagIds = [];
-                _.forEach(method.tags, function(tag) {
-                    let found = _.find(tags, {_id: tag});
-                    if (!!found) {
-                        tagIds.push(found);
+                _.forEach(method.tags, function(tagId) {
+                    if (tags[tagId]) {
+                        tagIds.push(tags[tagId]);
                     }
                 });
                 method.tags = tagIds;
@@ -70,7 +78,11 @@ router.route('/search')
             }
             let payload = {
                 $count: filteredMethods.length,
-                results: results
+                results: results,
+                filter: {
+                    groups: _.map(resultGroups),
+                    tags: _.map(resultTags)
+                }
             };
             res.send(payload);
         } catch (e) {
@@ -79,3 +91,4 @@ router.route('/search')
     });
 
 module.exports = router;
+
