@@ -40,14 +40,16 @@ router.route('/search')
     .post(function(req, res) {
         try {
             let allMethods = db.methods.find({});
-            let filteredMethods = filterMethods(allMethods, req.body);
+            let searchParams = req.body;
+            let filteredMethods = filterMethods(allMethods, searchParams);
 
             let groups = db.groups.find();
             let tags = db.tags.find();
-            let skip = Number(req.query.skip || 0);
-            let top = Number(req.query.top || 25);
-            let query = [];
-            for (let i = skip; i < top + skip && i < filteredMethods.length; i++) {
+            let page = Number(searchParams.page || 1) - 1;
+            let pageSize = Number(searchParams.pageSize || 25);
+            let start = page * pageSize;
+            let results = [];
+            for (let i = start; i < start + pageSize && i < filteredMethods.length; i++) {
                 let method = filteredMethods[i];
                 method.index = i;
                 if (!!method.group) {
@@ -64,19 +66,12 @@ router.route('/search')
                     }
                 });
                 method.tags = tagIds;
-                query.push(method);
+                results.push(method);
             }
             let payload = {
                 $count: filteredMethods.length,
-                results: query
+                results: results
             };
-            if (query.length === top && skip !== filteredMethods.length) {
-                payload.$next = {
-                    skip: top + skip,
-                    top: top,
-                    group: req.query.group
-                };
-            }
             res.send(payload);
         } catch (e) {
             res.status(500).send({message: e.message});
