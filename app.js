@@ -10,7 +10,7 @@ if (args.indexOf('cors') >= 0) {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use('/auth', require('./api/auth'));
-app.use('/users', require('./api/users'));
+app.use('/urm', require('./api/users'));
 app.use('/api', require('./api/methods'));
 app.use('/api', require('./api/tags'));
 app.use('/api', require('./api/search'));
