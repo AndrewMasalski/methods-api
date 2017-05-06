@@ -1,5 +1,6 @@
 let express = require('express');
 let bodyParser = require('body-parser');
+
 require('./db');
 let app = express();
 
@@ -9,6 +10,7 @@ if (args.indexOf('cors') >= 0) {
 }
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(require('./auth').basic());
 app.use('/auth', require('./api/auth'));
 app.use('/urm', require('./api/users'));
 app.use('/api', require('./api/methods'));

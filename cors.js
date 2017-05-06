@@ -5,7 +5,7 @@ module.exports = function allowCrossDomain(req, res, next) {
     res.setHeader('Pragma', 'no-cache');
 
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.setHeader('Access-Control-Allow-Headers', 'Authorization,X-Requested-With,content-type');
 
     let origin = req.headers.origin || '*';
     res.setHeader('Access-Control-Allow-Origin', origin);
