@@ -79,6 +79,33 @@ router.route('/search')
         }
     });
 
+router.route('/export')
+    .post(function(req, res) {
+        try {
+            let allMethods = db.methods.find({});
+            let searchParams = req.body;
+            searchParams.highlight = false;
+            let filteredMethods = filterMethods(allMethods, searchParams);
+            let groups = _.transform(db.groups.find(), function(result, value) {result[value._id] = value;}, {});
+            let forExport = _.map(filteredMethods, function(method){
+                return {
+                    'Описание': method.description,
+                    'Раздел': groups[method.group].name,
+                    'Тип': method.type,
+                    'Год': method.year
+                }
+            });
+            let str = require('../tsv').stringify(forExport);
+//            require('fs').writeFileSync('export.tsv', str);
+            const fileName = 'export'; // searchParams.query  // todo: russian text should be properly encoded
+            res.set({"Content-Disposition":"attachment; filename=" + fileName + '.tsv'});
+            res.send(str);
+
+        } catch (e) {
+            res.status(500).send({message: e.message});
+        }
+    });
+
 module.exports = router;
 
 function filterMethods(methods, searchParams) {
